@@ -1,0 +1,180 @@
+(defcfg
+  process-unmapped-keys	no	;;|no| enable processing of keys that are not in defsrc, useful if mapping a few keys in defsrc instead of most of the keys on your keyboard. Without this, the tap-hold-release and tap-hold-press actions will not activate for keys that are not in defsrc. Disabled because some keys may not work correctly if they are intercepted. E.g. rctl/altgr on Windows; see the windows-altgr configuration item above for context.
+  log-layer-changes    	no	;;|no| overhead
+)
+
+;; leaving out the home row, because otherwise multi modifier shortcuts are awkward
+;; also leaving out the "m", because it activates the number layer
+(defvar
+  left-hand-keys (
+    q w e r t
+            g
+    z x c v b
+  )
+  right-hand-keys (
+    y u i o p
+    h
+    n   , . /
+  )
+)
+
+;; same hand home row mod deactivation taken from https://github.com/jtroo/kanata/blob/main/cfg_samples/home-row-mod-advanced.kbd
+
+(defalias
+  ;; home row mods
+  a_ctl (tap-hold-release-keys 200 200 a lctl  $left-hand-keys)
+  s_alt (tap-hold-release-keys 200 200 s lalt  $left-hand-keys)
+  d_met (tap-hold-release-keys 200 200 d lmeta $left-hand-keys)
+  f_sft (tap-hold-release-keys 160 160 f lsft  $left-hand-keys)
+
+  j_sft (tap-hold-release-keys 160 160 j rsft  $right-hand-keys)
+  k_met (tap-hold-release-keys 200 200 k rmeta $right-hand-keys)
+  l_alt (tap-hold-release-keys 200 200 l ralt  $right-hand-keys)
+  ;_ctl (tap-hold-release-keys 200 200 ; rctl  $right-hand-keys)
+
+  ;; hyper keys below pinky home row position
+  z_hyp (tap-hold-release-keys 200 200 z (multi lctl lalt lmeta lsft reverse-release-order) $left-hand-keys)
+  /_hyp (tap-hold-release-keys 200 200 / (multi rctl ralt rmeta rsft reverse-release-order) $right-hand-keys)
+
+  ;; thumb keys
+  sym (layer-while-held U_SYM)
+  spc_nav (tap-hold-release 0 150 spc (layer-while-held U_NAV))
+  m_num (tap-hold-release-keys 200 200 m (layer-while-held U_NUM) $right-hand-keys)
+  ,_fun (tap-hold-release-keys 200 200 , (layer-while-held U_FUN) $right-hand-keys)
+
+  ;; mouse actions
+  mup (movemouse-accel-up 20 1000 5 30)
+  mleft (movemouse-accel-left 20 1000 5 30)
+  mdown (movemouse-accel-down 20 1000 5 30)
+  mright (movemouse-accel-right 20 1000 5 30)
+
+  ;; layers
+  med (layer-while-held U_MEDIA)
+  fun (layer-while-held U_FUN)
+
+  ;; word caps
+  wcaps (caps-word-toggle 20000) ;; big timeout of 20 seconds, because normally I don't want it to end automatically
+
+  ;; holding § activates a layer to switch to different layers for specific use cases
+  §layers (tap-hold-release 200 200 § (layer-switch U_LAYERS))
+  base (layer-switch U_BASE)
+  old (layer-switch U_OLD)
+  gaming (layer-switch U_GAMING)
+  deltarune (layer-switch U_DELTARUNE)
+)
+
+(deflocalkeys-macos
+  § 86
+)
+
+(defsrc
+            f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  §         1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab       q    w    e    r    t    y    u    i    o    p    [    ]    ret
+  caps      a    s    d    f    g    h    j    k    l    ;    '    \
+       `    z    x    c    v    b    n    m    ,    .    /    rsft up
+  fn   lctl lalt lmet           spc            rmet ralt      left down right
+)
+
+(deflayer U_BASE
+            f1     f2     f3     f4     f5     f6     f7     f8     f9     f10    f11    f12
+  @§layers  1      2      3      4      5      6      7      8      9      0      XX     XX     bspc
+  tab       q      w      e      r      t      y      u      i      o      p      bspc   ret    ret
+  esc       @a_ctl @s_alt @d_met @f_sft g      h      @j_sft @k_met @l_alt @;_ctl '      \
+       tab  @z_hyp x      c      v      b      n      @m_num @,_fun .      @/_hyp rsft   up
+  @med lctl lalt   lmet                 @spc_nav             @sym   ralt          left   down   right
+)
+
+(deflayer U_NAV
+         _      _      _      _       _      _      _      _      _      _      _      _
+  _      _      _      @mup   _       _      _      _      mmtp   _      _      _      _      _
+  _      _      @mleft @mdown @mright _      _      mltp   up     mrtp   _      _      _      _
+  _      lctl   lalt   lmeta  lsft    _      _      left   down   right  _      _      _
+     _   _      _      _      _       _      _      home   pgdn   pgup   end    _      _
+  _  _   _      _                     _                    del    _             _      _      _
+)
+
+(deflayer U_SYM
+         _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      XX     S-9    S-0    \      XX     _      _      _      _      _      _      _      _
+  _      -      [      ]      =      @wcaps _      rsft   rmeta  ralt   rctl   _      _
+     _   XX     XX     `      '      XX     _      _      _      _      _      _      _
+  _  _   _      _                    _                    _      _             _      _      _
+)
+
+(deflayer U_NUM
+         _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      XX     7      8      9      XX     _      _      _      _      _      _      _      _
+  _      XX     4      5      6      XX     _      rsft   rmeta  ralt   rctl   _      _
+     _   XX     1      2      3      XX     _      _      _      _      _      _      _
+  _  _   _      _                    0                    _      _             _      _      _
+)
+
+(deflayer U_FUN
+         _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      f12    f7     f8     f9     XX     _      _      _      _      _      _      _      _
+  _      f11    f4     f5     f6     XX     _      rsft   rmeta  ralt   rctl   _      _
+     _   f10    f1     f2     f3     XX     _      _      _      _      _      _      _
+  _  _   _      _                    _                    _      _             _      _      _
+)
+
+(deflayer U_MEDIA
+         brdn   brup   _      _      _      _      prev   pp     next   mute   vold   volu
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      prev   vold   volu   next   _      _
+     _   _      _      _      _      _      _      _      brdn   brup   _      _      _
+  _  _   _      _                    pp                   mute   _             _      _      lrld
+)
+
+(deflayer U_LAYERS
+         _     _     _       _          _    _    _    _    _    _    _    _
+  _      @base @old  @gaming @deltarune _    _    _    _    _    _    _    _    _
+  _      _     _     _       _          _    _    _    _    _    _    _    _    _
+  _      _     _     _       _          _    _    _    _    _    _    _    _
+     _   _     _     _       _          _    _    _    _    _    _    _    _
+  _  _   _     _                        _              _    _         _    _    _
+)
+
+;; alternative "base" layers
+
+(deflayer U_OLD
+            f1     f2   f3   f4   f5   f6   f7   f8   f9   f10    f11  f12
+  @§layers  1      2    3    4    5    6    7    8    9    0      -    =    bspc
+  tab       q      w    e    r    t    y    u    i    o    p      [    ]    ret
+  esc       a      s    d    f    g    h    j    k    l    ;      '    \
+       `    @z_hyp x    c    v    b    n    m    ,    .    @/_hyp rsft up
+  @med lctl lalt   lmet           spc            rmet ralt        left down right
+)
+
+(deflayer U_GAMING
+            f1     f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  @§layers  1      2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab       q      w    e    r    t    y    u    i    o    p    [    ]    ret
+  esc       a      s    d    f    g    h    j    k    l    ;    '    \
+       `    z      x    c    v    b    n    m    ,    .    /    rsft up
+  lctl lctl lalt   lmet           spc            rmet ralt      left down right
+)
+
+(deflayer U_DELTARUNE
+            f1     f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  @§layers  1      2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab       q      w    e    r    t    y    u    up   o    p    [    ]    ret
+  esc       a      s    d    f    g    h    left down right    ;    '    \
+       `    ret    rsft c    v    b    n    m    ,    .    /    rsft up
+  lctl lctl lalt   lmet           spc            rmet ralt      left down right
+)
+
+#| Template with all keys transparent, used for future additional layers
+(deflayer U_<template>
+         _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _      _
+  _      _      _      _      _      _      _      _      _      _      _      _      _
+     _   _      _      _      _      _      _      _      _      _      _      _      _
+  _  _   _      _                    _                    _      _             _      _      _
+)
+|#
