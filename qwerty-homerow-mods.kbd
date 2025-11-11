@@ -1,13 +1,14 @@
 (defcfg
   process-unmapped-keys	  no  ;;|no|  enable processing of keys that are not in defsrc, useful if mapping a few keys in defsrc instead of most of the keys on your keyboard. Without this, the tap-hold-release and tap-hold-press actions will not activate for keys that are not in defsrc. Disabled because some keys may not work correctly if they are intercepted. E.g. rctl/altgr on Windows; see the windows-altgr configuration item above for context.
   log-layer-changes    	  no  ;;|no|  overhead
-  delegate-to-first-layer yes ;;|yes| I never want to have the default behavior of e.g. right command which I want as a layer toggle. Especially with the NOMODS layer I had issues when typing fast and wanting to swtich to the symbol layer on the physical right command key
+  delegate-to-first-layer yes
 )
 
 
 ;; Home Row Mods config inspired by jtroo's example config from: https://github.com/jtroo/kanata/blob/main/cfg_samples/home-row-mod-advanced.kbd
 (defvar
   tap-time 200
+  tap-time-index 150
   hold-time 150
 
   hold-time-index  150
@@ -18,7 +19,7 @@
   ;; leaving out home row to be able to hold home row mods concurrently
   left-hand-keys (
     q w e r t
-    a
+            g
     z x c v b
   )
 
@@ -31,26 +32,17 @@
   )
 )
 
-(deffakekeys
-  to-base (layer-switch BASE)
-)
-
 (defalias
   ;; home row mods
-  tap (multi
-    (layer-switch NOMODS)
-    (on-idle-fakekey to-base tap 20)
-  )
+  a_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  a lctl  $left-hand-keys)
+  s_alt (tap-hold-release-keys $tap-time $hold-time-ring   s lalt  $left-hand-keys)
+  d_met (tap-hold-release-keys $tap-time $hold-time-middle d lmet  $left-hand-keys)
+  f_sft (tap-hold-release-keys $tap-time-index $hold-time-index  f lsft  $left-hand-keys)
 
-  a_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  (multi a @tap) lctl  $left-hand-keys)
-  s_alt (tap-hold-release-keys $tap-time $hold-time-ring   (multi s @tap) lalt  $left-hand-keys)
-  d_met (tap-hold-release-keys $tap-time $hold-time-middle (multi d @tap) lmet  $left-hand-keys)
-  f_sft (tap-hold-release-keys $tap-time $hold-time-index  (multi f @tap) lsft  $left-hand-keys)
-
-  j_sft (tap-hold-release-keys $tap-time $hold-time-index  (multi j @tap) rsft  $right-hand-keys)
-  k_met (tap-hold-release-keys $tap-time $hold-time-middle (multi k @tap) rmet  $right-hand-keys)
-  l_alt (tap-hold-release-keys $tap-time $hold-time-ring   (multi l @tap) ralt  $right-hand-keys)
-  ;_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  (multi ; @tap) rctl  $right-hand-keys)
+  j_sft (tap-hold-release-keys $tap-time-index $hold-time-index  j rsft  $right-hand-keys)
+  k_met (tap-hold-release-keys $tap-time $hold-time-middle k rmet  $right-hand-keys)
+  l_alt (tap-hold-release-keys $tap-time $hold-time-ring   l ralt  $right-hand-keys)
+  ;_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  ; rctl  $right-hand-keys)
 
   ;; hyper keys below pinky home row position
   z_hyp (tap-hold-release-keys 200 200 z (multi lctl lalt lmeta lsft reverse-release-order) $left-hand-keys)
@@ -103,16 +95,6 @@
   esc       @a_ctl @s_alt @d_met @f_sft g      h      @j_sft @k_met @l_alt @;_ctl '      \
        tab  @z_hyp x      c      v      b      n      @m_num @,_fun .      @/_hyp rsft   up
   @med lctl lalt   lmet                 @spc_nav             @sym   ralt          left   down   right
-)
-
-;; nomods used for better feel when using home row mods (see defalias)
-(deflayer NOMODS
-         _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      a      s      d      f      _      _      j      k      l      ;      _      _
-     _   _      _      _      _      _      _      _      _      _      _      _      _
-  _  _   _      _                    _                    _      _             _      _      _
 )
 
 (deflayer NAV
