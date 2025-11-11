@@ -24,25 +24,24 @@
   )
 
   ;; leaving out home row to be able to hold home row mods concurrently
-  ;; leaving out "m" and "," because they are configured to tap-hold layer toggles. When including them, it can lead to unintended behavior when holding the home row mod before pressing the layer toggle
   right-hand-keys (
     y u i o p
     h
-    n     . /
+    n m , . /
   )
 )
 
 (defalias
   ;; home row mods
-  a_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  a lctl  $left-hand-keys)
-  s_alt (tap-hold-release-keys $tap-time $hold-time-ring   s lalt  $left-hand-keys)
-  d_met (tap-hold-release-keys $tap-time $hold-time-middle d lmet  $left-hand-keys)
+  a_ctl (tap-hold-release-keys $tap-time       $hold-time-pinky  a lctl  $left-hand-keys)
+  s_alt (tap-hold-release-keys $tap-time       $hold-time-ring   s lalt  $left-hand-keys)
+  d_met (tap-hold-release-keys $tap-time       $hold-time-middle d lmet  $left-hand-keys)
   f_sft (tap-hold-release-keys $tap-time-index $hold-time-index  f lsft  $left-hand-keys)
 
   j_sft (tap-hold-release-keys $tap-time-index $hold-time-index  j rsft  $right-hand-keys)
-  k_met (tap-hold-release-keys $tap-time $hold-time-middle k rmet  $right-hand-keys)
-  l_alt (tap-hold-release-keys $tap-time $hold-time-ring   l ralt  $right-hand-keys)
-  ;_ctl (tap-hold-release-keys $tap-time $hold-time-pinky  ; rctl  $right-hand-keys)
+  k_met (tap-hold-release-keys $tap-time       $hold-time-middle k rmet  $right-hand-keys)
+  l_alt (tap-hold-release-keys $tap-time       $hold-time-ring   l ralt  $right-hand-keys)
+  ;_ctl (tap-hold-release-keys $tap-time       $hold-time-pinky  ; rctl  $right-hand-keys)
 
   ;; hyper keys below pinky home row position
   z_hyp (tap-hold-release-keys 200 200 z (multi lctl lalt lmeta lsft reverse-release-order) $left-hand-keys)
@@ -51,8 +50,6 @@
   ;; thumb keys
   sym (layer-while-held SYM)
   spc_nav (tap-hold-release 0 150 spc (layer-while-held NAV))
-  m_num (tap-hold-release-keys 200 200 m (layer-while-held NUM) $right-hand-keys)
-  ,_fun (tap-hold-release-keys 200 200 , (layer-while-held FUN) $right-hand-keys)
 
   ;; mouse actions
   mup (movemouse-accel-up 20 1000 5 30)
@@ -62,7 +59,6 @@
 
   ;; layers
   med (layer-while-held MEDIA)
-  fun (layer-while-held FUN)
 
   ;; word caps
   wcaps (caps-word-toggle 20000) ;; big timeout of 20 seconds, because normally I don't want it to end automatically
@@ -93,7 +89,7 @@
   @§layers  1      2      3      4      5      6      7      8      9      0      XX     XX     bspc
   tab       q      w      e      r      t      y      u      i      o      p      bspc   ret    ret
   esc       @a_ctl @s_alt @d_met @f_sft g      h      @j_sft @k_met @l_alt @;_ctl '      \
-       tab  @z_hyp x      c      v      b      n      @m_num @,_fun .      @/_hyp rsft   up
+       tab  @z_hyp x      c      v      b      n      m      ,      .      @/_hyp rsft   up
   @med lctl lalt   lmet                 @spc_nav             @sym   ralt          left   down   right
 )
 
@@ -112,24 +108,6 @@
   _      XX     S-9    S-0    \      XX     _      _      _      _      _      _      _      _
   _      -      [      ]      =      @wcaps _      rsft   rmeta  ralt   rctl   _      _
      _   XX     XX     `      '      XX     _      _      _      _      _      _      _
-  _  _   _      _                    _                    _      _             _      _      _
-)
-
-(deflayer NUM
-         _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      XX     7      8      9      XX     _      _      _      _      _      _      _      _
-  _      XX     4      5      6      XX     _      rsft   rmeta  ralt   rctl   _      _
-     _   XX     1      2      3      XX     _      _      _      _      _      _      _
-  _  _   _      _                    0                    _      _             _      _      _
-)
-
-(deflayer FUN
-         _      _      _      _      _      _      _      _      _      _      _      _
-  _      _      _      _      _      _      _      _      _      _      _      _      _      _
-  _      f12    f7     f8     f9     XX     _      _      _      _      _      _      _      _
-  _      f11    f4     f5     f6     XX     _      rsft   rmeta  ralt   rctl   _      _
-     _   f10    f1     f2     f3     XX     _      _      _      _      _      _      _
   _  _   _      _                    _                    _      _             _      _      _
 )
 
